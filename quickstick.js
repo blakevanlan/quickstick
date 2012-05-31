@@ -14,7 +14,7 @@
             base.options = $.extend({}, $.quickstick.header.defaultOptions, options);
             base.headerClone = base.$el.clone(true, true).hide().css({
                 "position": "fixed",
-                "z-index": 10000,
+                "z-index": base.options["z-index"],
                 "left": base.$el.offset().left,
                 "top": base.options.offsetTop,
                 "margin-top": 0,
@@ -69,7 +69,8 @@
     $.quickstick.header.defaultOptions = {
         "headerClass": "quick-stick",
         "offsetTop": 0,
-        "hideOriginal": false,
+        "hideOriginal": true,
+        "z-index": 1000,
         "onStick": $.noop,
         "onUnstick": $.noop
     };
@@ -119,7 +120,7 @@
     };
  
     $.quickstick.footer.defaultOptions = {
-        // Default options for footer
+        // Default options for footer, left in to make it easy to add options in the future
     };
 
     $.fn.quickStickHeader = function ( options ) {
