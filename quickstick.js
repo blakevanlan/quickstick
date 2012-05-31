@@ -38,7 +38,7 @@
         }
 
         base.initClone = function() {
-            base.headerClone = base.$el.clone(true, true).hide().css({
+            base.headerClone = base.$el.addClass('original').clone(true, true).hide().css({
                 "position": "fixed",
                 "z-index": base.options["z-index"],
                 "left": base.$el.offset().left,
@@ -66,6 +66,7 @@
             }
 
             base.headerClone.css("width", base.$el.width());
+            base.headerClone.css("left", base.$el.offset().left);
 
             if ($(window).scrollTop() > base.$el.offset().top - base.options.offsetTop) {
                 base.headerClone.show();
