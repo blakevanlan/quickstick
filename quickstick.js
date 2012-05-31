@@ -3,25 +3,17 @@
         $.quickstick = {};
     };
 
-    $.quickstick.header = function ( el, options ) {
+    $.quickstick.header = function ( el, methodToCall, options ) {
         var base = this;
         base.$el = $(el);
         base.el = el;
  
-        base.$el.data( "quickstick.header" , base );
- 
         base.init = function () {
             base.options = $.extend({}, $.quickstick.header.defaultOptions, options);
-            base.headerClone = base.$el.clone(true, true).hide().css({
-                "position": "fixed",
-                "z-index": base.options["z-index"],
-                "left": base.$el.offset().left,
-                "top": base.options.offsetTop,
-                "margin-top": 0,
-                "width": base.$el.width()
-            }).addClass(base.options.headerClass).appendTo("body");
-
+            base.headerCloneCreated = false;
             base.isStuck = false;
+
+            base.positionHeader();
 
             $(window)
             .scroll(function(e){
@@ -32,8 +24,46 @@
             });
         };
         
+        base.canPosition = function() {
+            if (!base.headerCloneCreated) {
+                if (base.$el.is(":visible")) {
+                    base.initClone();
+                    return true;
+                }
+                else {
+                    return false
+                }
+            }
+            return true;
+        }
+
+        base.initClone = function() {
+            base.headerClone = base.$el.clone(true, true).hide().css({
+                "position": "fixed",
+                "z-index": base.options["z-index"],
+                "left": base.$el.offset().left,
+                "top": base.options.offsetTop,
+                "margin-top": 0,
+                "width": base.$el.width()
+            }).addClass(base.options.headerClass);
+
+            // Change headerClone Id if it has one
+            var headerCloneId = $(base.headerClone).attr('id');
+            if (typeof headerCloneId !== 'undefined' && headerCloneId !== false) {
+
+                base.headerClone.attr('id', headerCloneId + '-clone');
+            }
+
+            base.$el.after(base.headerClone);
+            base.headerCloneCreated = true;
+        }
+
         base.positionHeader = function( eventObject ) {
             var e = eventObject || null;
+
+            if (!base.canPosition()) {
+                return;
+            }
 
             base.headerClone.css("width", base.$el.width());
 
@@ -63,7 +93,16 @@
             }
         }
 
-        base.init();
+        if (methodToCall != null && methodToCall.toLowerCase() === "update") {
+            if (base.headerClone && base.headerCloneCreated) {
+                base.headerClone.remove();
+            }
+            base.init();
+        }
+        else {
+            base.$el.data( "quickstick.header" , base );
+            base.init();
+        }
     };
  
     $.quickstick.header.defaultOptions = {
@@ -114,8 +153,8 @@
             base.positionFooter();
         }
         else {
-            base.init();
             base.$el.data( "quickstick.footer" , base );
+            base.init();
         }
     };
  
@@ -123,10 +162,22 @@
         // Default options for footer, left in to make it easy to add options in the future
     };
 
-    $.fn.quickStickHeader = function ( options ) {
-        return this.each(function () {
-            (new $.quickstick.header(this, options));
-        });
+    $.fn.quickStickHeader = function ( method, options ) {
+        if (typeof method === "string") {
+            return this.each(function () {
+            (new $.quickstick.header(this, method, options));
+            });
+        }
+        else if (typeof method === "object") {
+            return this.each(function () {
+            (new $.quickstick.header(this, "init", method));
+            });
+        }
+        else {
+            return this.each(function () {
+            (new $.quickstick.header(this, "init", null));
+            });
+        }
     };
     $.fn.quickStickFooter = function ( method, options ) {
         if (typeof method === "string") {
