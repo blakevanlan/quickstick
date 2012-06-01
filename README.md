@@ -10,18 +10,22 @@ The following options can be supplied (defaults are shown):
 ```javascript
 $(selector).quickStickHeader({
   'headerClass': 'quick-stick',
+  'scrollClass': 'scrolling',
   'offsetTop': 0,
   'hideOriginal': true,
   'z-index': 1000,
+  'allowOverflow': true,
   'onStick': null,
   'onUnstick': null
 });
 ```
 ###Options Explained
 - __headerClass__: This is the class that QuickStick adds on to the header when it is "stuck" to the top of the window. This is useful for styling drop shadows.
+- __scrollClass__: This is that class that QuickStick adds on to the header when 'allowOverflow' is true and the contents overflows the window.
 - __offsetTop__: This offsets where the header is "stuck". Positive values move the header down, away from the top of the window. 
 - __hideOriginal__: This is useful in conjunction with _offsetTop_. It hides the original header.
-- __z-index__: This sets the z-index for when the header is "stuck".
+- __z-index__: Sets the z-index for when the header is "stuck".
+- __allowOverflow__: Indicates if the header is allowed to overflow the window. 
 - __onStick__: This is a callback function that is triggered when the header is "stuck" to the window.
 - __onUnstick__: This a callback function that is triggered when the header is "unstuck" from the window.
 
